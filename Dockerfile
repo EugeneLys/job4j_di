@@ -1,6 +1,9 @@
-FROM maven:3.6.3-openjdk-17
-RUN mkdir job4j_di
-WORKDIR job4j_di
+FROM maven:3.6.3-openjdk-17 AS maven
+WORKDIR /job4j_di
 COPY . .
 RUN mvn install
-CMD ["java", "-jar", "target/main.jar"]
+
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+COPY --from=maven /job4j_di/target/main.jar app.jar
+CMD ["java", "-jar", "app.jar"]
